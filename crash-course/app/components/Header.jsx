@@ -1,14 +1,32 @@
-import { signIn } from "@/auth";
+import { auth } from "@/auth";
+import Image from "next/image";
+import Signin from "./Signin";
+import Signout from "./Signout";
 
-export default function Header() {
+const Header = async () => {
+  const session = await auth();
+
+  // console.log(user);
+
   return (
-    <form
-      action={async () => {
-        "use server";
-        await signIn("google");
-      }}
-    >
-      <button type="submit">Signin with Google</button>
-    </form>
+    <div>
+      {session?.user ? (
+        <div className="flex gap-5">
+          <h1>Welcome to {session?.user?.name}</h1> |
+          <Image
+            src={session?.user?.image}
+            alt={session?.user?.name}
+            width={32}
+            height={32}
+            className="rounded-full"
+          />
+          <Signout />
+        </div>
+      ) : (
+        <Signin />
+      )}
+    </div>
   );
-}
+};
+
+export default Header;
